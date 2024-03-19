@@ -45,12 +45,12 @@ class Model(object):
                    adata_B_input, 
                    shared_gene_num
                    ):
-        adata_A = adata_A_input.copy()
-        adata_B = adata_B_input.copy()
+        self.adata_A = adata_A_input.copy()
+        self.adata_B = adata_B_input.copy()
 
         self.shared_gene_num = shared_gene_num
-        self.emb_A = adata_A.X
-        self.emb_B = adata_B.X
+        self.emb_A = self.adata_A.X
+        self.emb_B = self.adata_B.X
 
     def preprocess_additional_inputs(self, 
                    adata_A_input, 
@@ -304,6 +304,21 @@ class Model(object):
         self.data_Aspace = np.concatenate((self.emb_A, x_BtoA.detach().cpu().numpy()), axis=0)
         self.data_Bspace = np.concatenate((x_AtoB.detach().cpu().numpy(), self.emb_B), axis=0)
 
+    def get_imputed_df(self, 
+                       scale = 'scaled' # if scale=='log', then restore expression after log1p
+                       ):
+
+        x_BtoA = self.data_Aspace[self.emb_A.shape[0]:]
+        x_AtoB = self.data_Bspace[:self.emb_B.shape[0]]
+        if scale == 'log':
+            x_BtoA = x_BtoA * self.adata_A.var['std'].values.reshape(1, -1) + self.adata_A.var['mean'].values.reshape(1, -1)
+            x_AtoB = x_AtoB * self.adata_B.var['std'].values.reshape(1, -1) + self.adata_B.var['mean'].values.reshape(1, -1)
+        imputed_df_BtoA = pd.DataFrame(x_BtoA, index=self.adata_A.obs.index, columns=self.adata_A.var.feature_name)
+        imputed_df_BtoA = imputed_df_BtoA.groupby(imputed_df_BtoA.columns, axis=1).mean()
+        imputed_df_AtoB = pd.DataFrame(x_AtoB, index=self.adata_B.obs.index, columns=self.adata_B.var.feature_name)
+        imputed_df_AtoB = imputed_df_AtoB.groupby(imputed_df_AtoB.columns, axis=1).mean()
+        self.imputed_df_BtoA = imputed_df_BtoA
+        self.imputed_df_AtoB = imputed_df_AtoB
 
     def integrate_datasets_links(self, # Use this function for N >= 3 datasets when provided features links for MNN
                                  input_feats,
