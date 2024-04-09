@@ -213,13 +213,13 @@ class Model(object):
                        ):
 
         x_BtoA = self.data_Aspace[self.emb_A.shape[0]:]
-        x_AtoB = self.data_Bspace[:self.emb_B.shape[0]]
+        x_AtoB = self.data_Bspace[:self.emb_A.shape[0]]
         if scale == 'log':
             x_BtoA = x_BtoA * self.adata_A.var['std'].values.reshape(1, -1) + self.adata_A.var['mean'].values.reshape(1, -1)
             x_AtoB = x_AtoB * self.adata_B.var['std'].values.reshape(1, -1) + self.adata_B.var['mean'].values.reshape(1, -1)
-        imputed_df_BtoA = pd.DataFrame(x_BtoA, index=self.adata_A.obs.index, columns=self.adata_A.var.feature_name)
+        imputed_df_BtoA = pd.DataFrame(x_BtoA, index=self.adata_B.obs.index, columns=self.adata_A.var.feature_name)
         imputed_df_BtoA = imputed_df_BtoA.groupby(imputed_df_BtoA.columns, axis=1).mean()
-        imputed_df_AtoB = pd.DataFrame(x_AtoB, index=self.adata_B.obs.index, columns=self.adata_B.var.feature_name)
+        imputed_df_AtoB = pd.DataFrame(x_AtoB, index=self.adata_A.obs.index, columns=self.adata_B.var.feature_name)
         imputed_df_AtoB = imputed_df_AtoB.groupby(imputed_df_AtoB.columns, axis=1).mean()
         self.imputed_df_BtoA = imputed_df_BtoA
         self.imputed_df_AtoB = imputed_df_AtoB
