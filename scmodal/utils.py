@@ -38,29 +38,9 @@ def annotate_by_nn(vec_tar, vec_ref, label_ref, k=20, metric='cosine'):
     labels = [max(list(label_ref[i]), key=list(label_ref[i]).count) for i in idx]
     return labels
 
-def plot_UMAP(data, meta, space="latent", score=None, colors=["method"], subsample=False,
-              save=False, result_path=None, filename_suffix=None):
-    if filename_suffix is not None:
-        filenames = [os.path.join(result_path, "%s-%s-%s.pdf" % (space, c, filename_suffix)) for c in colors]
-    else:
-        filenames = [os.path.join(result_path, "%s-%s.pdf" % (space, c)) for c in colors]
+def compute_umap(adata, rep=None):
+    import umap
 
-    if subsample:
-        if data.shape[0] >= 1e5:
-            np.random.seed(1234)
-            subsample_idx = np.random.choice(data.shape[0], 50000, replace=False)
-            data = data[subsample_idx]
-            meta = meta.iloc[subsample_idx]
-            if score is not None:
-                score = score[subsample_idx]
-    
-    adata = ad.AnnData(X=data)
-    adata.obs.index = meta.index
-    adata.obs = pd.concat([adata.obs, meta], axis=1)
-    adata.var.index = "dim-" + adata.var.index
-    adata.obsm["latent"] = data
-    
-    # run UMAP
     reducer = umap.UMAP(n_neighbors=30,
                         n_components=2,
                         metric="correlation",
@@ -78,40 +58,10 @@ def plot_UMAP(data, meta, space="latent", score=None, colors=["method"], subsamp
                         metric_kwds=None,
                         angular_rp_forest=False,
                         verbose=True)
-    embedding = reducer.fit_transform(adata.obsm["latent"])
-    adata.obsm["X_umap"] = embedding
-
-    n_cells = embedding.shape[0]
-    if n_cells >= 10000:
-        size = 120000 / n_cells
+    if rep is None:
+        X_umap = reducer.fit_transform(adata.X)
     else:
-        size = 12
+        X_umap = reducer.fit_transform(adata.obsm[rep])
 
-    for i, c in enumerate(colors):
-        groups = sorted(set(adata.obs[c].astype(str)))
-        if "nan" in groups:
-            groups.remove("nan")
-        palette = "rainbow"
-        if save:
-            fig = sc.pl.umap(adata, color=c, palette=palette, groups=groups, return_fig=True, size=size)
-            fig.savefig(filenames[i], bbox_inches='tight', dpi=300)
-        else:
-            sc.pl.umap(adata, color=c, palette=palette, groups=groups, size=size)
-
-    if space == "Aspace":
-        method_set = pd.unique(meta["method"])
-        adata.obs["score"] = score
-        adata.obs["margin"] = (score < -5.0) * 1
-        fig = sc.pl.umap(adata[meta["method"]==method_set[1]], color="score", palette=palette, groups=groups, return_fig=True, size=size)
-        fig.savefig(os.path.join(result_path, "%s-score.pdf" % space), bbox_inches='tight', dpi=300)
-        fig = sc.pl.umap(adata[meta["method"]==method_set[1]], color="margin", palette=palette, groups=groups, return_fig=True, size=size)
-        fig.savefig(os.path.join(result_path, "%s-margin.pdf" % space), bbox_inches='tight', dpi=300)
-    if space == "Bspace":
-        method_set = pd.unique(meta["method"])
-        adata.obs["score"] = score
-        adata.obs["margin"] = (score < -5.0) * 1
-        fig = sc.pl.umap(adata[meta["method"]==method_set[0]], color="score", palette=palette, groups=groups, return_fig=True, size=size)
-        fig.savefig(os.path.join(result_path, "%s-score.pdf" % space), bbox_inches='tight', dpi=300)
-        fig = sc.pl.umap(adata[meta["method"]==method_set[0]], color="margin", palette=palette, groups=groups, return_fig=True, size=size)
-        fig.savefig(os.path.join(result_path, "%s-margin.pdf" % space), bbox_inches='tight', dpi=300)
+    adata.obsm['X_umap'] = X_umap
 
