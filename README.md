@@ -10,6 +10,25 @@ We introduce scMODAL, a deep learning framework tailored for single-cell multi-o
 
 ## Quick Start
 
-## Demos
+### Basic Usage
+If the datasets are preprocessed as AnnData objects whose first `n_shared` columns contain linked features from different modalities, scMODAL can be ran using the following code:
+```python
+import scmodal
+
+model = scmodal.model.Model()
+model.preprocess(adata1, adata2, shared_gene_num=n_shared)
+model.train() # train the model
+model.eval() # get integrated latent representation of cells
+```
+`model.latent` stores the integrated latent representation of cells, enabling downstream integrative analysis.
+
+Alternatively, scMODAL also takes the inputs with linked features and all features in separate matrices. For example, three datasets can be integrated using 
+```python
+model.integrate_datasets_feats(input_feats=[adata1.X, adata2.X, adata3.X],
+                               paired_input_MNN=[[X1_12, X2_12], [X2_23, X3_23]])
+```
+where `[X1_12, X2_12]` represents the pair of linked features between datasets 1 and 2, and `[X2_23, X3_23]` represents the pair of linked features between datasets 2 and 3.
+## Vignettes
+We provide source codes for using scMODAL and reproducing the experiments. Please check the [tutorial website](https://scmodal-tutorial.readthedocs.io/en/latest/index.html) for more details.
 
 ## Citation
