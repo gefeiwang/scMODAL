@@ -7,6 +7,13 @@ We introduce scMODAL, a deep learning framework tailored for single-cell multi-o
 ![scMODAL_overview](https://github.com/gefeiwang/scMODAL/blob/main/demos/Overview.png)
 
 ## Installation
+scMODAL can be installed from from GitHub:
+```bash
+git clone https://github.com/gefeiwang/scMODAL.git
+cd scMODAL
+conda env update --f environment.yml
+conda activate scmodal
+```
 
 ## Quick Start
 
