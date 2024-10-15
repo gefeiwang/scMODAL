@@ -14,6 +14,7 @@ cd scMODAL
 conda env update --f environment.yml
 conda activate scmodal
 ```
+Normally the installation time is less than 5 minutes.
 
 ## Quick Start
 
@@ -39,3 +40,4 @@ where `[X1_12, X2_12]` represents the pair of linked features between datasets 1
 We provide source codes for using scMODAL and reproducing the experiments. Please check the [tutorial website](https://scmodal-tutorial.readthedocs.io/en/latest/index.html) for more details.
 
 ## Citation
+Gefei Wang, Jia Zhao, Yingxin Lin, Tianyu Liu, Yize Zhao, Hongyu Zhao. scMODAL: A general deep learning framework for comprehensive single-cell multi-omics data alignment with feature links. bioRxiv 2024; doi: https://doi.org/10.1101/2024.10.01.616142.
