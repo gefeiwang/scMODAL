@@ -463,3 +463,12 @@ class Model(object):
 
         self.latent = np.concatenate([z_dict[i].detach().cpu().numpy() for i in range(num_datasets)], axis=0)
 
+        if not os.path.exists(self.model_path):
+            os.makedirs(self.model_path)
+
+        state = {}
+        for i in range(num_datasets):
+            state['E_%d' % i] = self.E_dict[i].state_dict()
+            state['G_%d' % i] = self.G_dict[i].state_dict()
+
+        torch.save(state, os.path.join(self.model_path, "ckpt.pth"))
