@@ -36,8 +36,27 @@ model.integrate_datasets_feats(input_feats=[adata1.X, adata2.X, adata3.X],
                                paired_input_MNN=[[X1_12, X2_12], [X2_23, X3_23]])
 ```
 where `[X1_12, X2_12]` represents the pair of linked features between datasets 1 and 2, and `[X2_23, X3_23]` represents the pair of linked features between datasets 2 and 3.
+
 ## Vignettes
 We provide source codes for using scMODAL and reproducing the experiments. Please check the [tutorial website](https://scmodal-tutorial.readthedocs.io/en/latest/index.html) for more details.
+### Note on find feature correspondence between protein and RNA modalities
+Currently, we follow [MaxFuse](https://github.com/shuxiaoc/maxfuse/tree/main#vignettes) to establish feature correspondence between protein and RNA modalities with a given .csv file. Users can also retrieve the correspondence from online resources, such as [mygene](https://docs.mygene.info/projects/mygene-py/en/latest/):
+
+```python
+import mygene
+mg = mygene.MyGeneInfo()
+
+# List of cell surface proteins
+proteins = ["Ki-67", "CD3", "CD4", "CD8", "CD38"]
+
+# Query the database
+result = mg.querymany(proteins, scopes="name", fields="symbol,name", species="human")
+
+# Extract gene symbols
+for entry in result:
+    print(f"Protein: {entry.get('name')}, Gene Symbol: {entry.get('symbol')}")
+```
+However, due to differences in nomenclature conversions, the output may be incomplete. Therefore, we recommend that users gather the aliases of proteins and gene symbols in order to refine the RNA-protein correspondences in the output.
 
 ## Citation
 Gefei Wang, Jia Zhao, Yingxin Lin, Tianyu Liu, Yize Zhao, Hongyu Zhao. scMODAL: A general deep learning framework for comprehensive single-cell multi-omics data alignment with feature links. bioRxiv 2024; doi: https://doi.org/10.1101/2024.10.01.616142.
