@@ -1,4 +1,5 @@
 # scMODAL
+[![DOI](https://zenodo.org/badge/771573139.svg)](https://doi.org/10.5281/zenodo.15304075)
 
 *scMODAL: A general deep learning framework for single-cell Multi-Omics Data Alignment with feature Links*
 
