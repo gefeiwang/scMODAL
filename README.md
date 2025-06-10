@@ -60,4 +60,4 @@ for entry in result:
 However, due to differences in nomenclature conversions, the output may be incomplete. Therefore, we recommend that users gather the aliases of proteins and gene symbols in order to refine the RNA-protein correspondences in the output.
 
 ## Citation
-Gefei Wang, Jia Zhao, Yingxin Lin, Tianyu Liu, Yize Zhao, Hongyu Zhao. scMODAL: A general deep learning framework for comprehensive single-cell multi-omics data alignment with feature links. bioRxiv 2024; doi: https://doi.org/10.1101/2024.10.01.616142.
+Gefei Wang, Jia Zhao, Yingxin Lin, Tianyu Liu, Yize Zhao, Hongyu Zhao. scMODAL: A general deep learning framework for comprehensive single-cell multi-omics data alignment with feature links. Nature Communications 16, 4994 (2025).
